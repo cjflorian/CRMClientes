@@ -3,21 +3,34 @@
     <span class="fa fa-plus"></span>
     Nuevo clientes
   </button>
+
 <div class="container">
-    <div class="clientes" *ngFor="let cliente of arrClientes; index as i" >
-        <div class="cliente">
-            <h4> {{cliente.id}} - {{cliente.nombre}} {{cliente.apellido}}</h4>
-            <p>{{cliente.email}}</p>
-            <p>{{cliente.createAt}}</p>
-            <p>Descripcion {{ cliente.tipocliente.nombre }}</p>
-            
-            
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">nombres</th>
+        <th scope="col">email</th>
+        <th scope="col">tipo cliente</th>
+        <th scope="col">Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cliente of arrClientes; index as i" >
+        <th scope="row"> {{cliente.id}}</th>
+        <td>{{cliente.nombre}} {{cliente.apellido}}</td>
+        <td>{{cliente.email}}</td>
+        <td>{{ cliente.tipocliente.nombre }}</td>
+        <td>
             <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" (click)="onClickDetalle(cliente.id)">Detalle</button>
             <button type="button" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#myModalInsert" (click)="onClickModificar(cliente.id)">Modificar</button>
             <button type="button" class="btn btn-danger btn-lg"  (click)="onClickEliminar(cliente.id)">Eliminar</button>
-        </div>
-    </div>
 
+        </td>
+      </tr>
+    </tbody>
+
+  </table>
     
 
     
@@ -32,10 +45,11 @@
           </button>
         </div>
         <div class="modal-body">
-            {{email}}
-            {{createAt}}
+          <h5> Nombres: {{nombre}} {{apellido}} </h5>
+            <h6>Correo: {{email}}</h6>
+            <h6>Tipo de cliente: {{tipoClienteId}}</h6>
+            <h6>Creacion: {{createAt}}</h6>
         </div>
-        
       </div>
     </div>
   </div>

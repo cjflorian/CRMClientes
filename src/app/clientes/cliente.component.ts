@@ -1,14 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Clientes } from '../models/cliente.module';
 import { ClientesService } from '../services/clientes.service';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ClienteFormularioComponent } from './formulario/cliente-formulario.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cliente',
   templateUrl: './cliente.component.html',
   styleUrls: ['./cliente.component.css']
+ 
 })
 export class ClienteComponent implements OnInit {
-
+  message: string;
   arrClientes: any[];
   closeResult = '';
   cliente: Clientes[];
@@ -19,8 +23,9 @@ export class ClienteComponent implements OnInit {
   @Input () createAt: Date;
   @Input () tipoClienteId: number;
   @Input () nombreCliente: string;
+  myNewMethodSubs: Subscription = new Subscription;
 
-  constructor(private clienteService: ClientesService) { 
+  constructor(private clienteService: ClientesService, private modalService: NgbModal) { 
     this.arrClientes = [];
     this.cliente = [];
     this.id = 0;
@@ -30,46 +35,37 @@ export class ClienteComponent implements OnInit {
     this.createAt = new Date;
     this.tipoClienteId = 0;
     this.nombreCliente = "";
+    this.message = "";
+
+    this.clienteService.currentMessage.subscribe(message => this.message = message);
   }
 
   ngOnInit(): void {
+    this.ngLoad();
+
+    this.myNewMethodSubs = this.clienteService.invokeMyNewMethod.subscribe(res => {
+      this.ngLoad();
+    });
+    
+  }
+
+  ngLoad(): void {
     this.clienteService.getAll()
     .then(clientes => this.arrClientes = clientes)
     .catch(error => console.log(console.error(error)));
-    this.clienteService.getAll()
-    .then( res => console.log(res[0].tipocliente.nombre));
-    
   }
 
-  /*
-  async ngOnInit() {
-   
-    try{
-      const cliente = await this.clienteService.getAll();
-      console.log(cliente);
-       
-      let array = [];  
-  for(let key in cliente){  
-   if(cliente.hasOwnProperty(key)){  
-     array.push(cliente[key]);  
-   }  
-  }  
-  console.log(array);  
-        }
-    catch(error){
-      console.log(error);
-      }
-    
-  }
-  */
 
   onClickEliminar(id:any){
-    alert(id);
+    if(confirm("Are you sure to delete" + id)) {
+      this.clienteService.delete(id);
+      this.ngLoad();
+    }
+    
   }
 
   onClickModificar(id:any){
-    alert(id);
-    this.clienteService.callMyMethod("Jose");
+    this.clienteService.callMyMethod(id);
   }
 
   async onClickDetalle(id:any){
@@ -81,10 +77,16 @@ export class ClienteComponent implements OnInit {
       this.apellido = cliente.apellido;
       this.email = cliente.email;
       this.createAt = cliente.createAt;
+      this.tipoClienteId = cliente.tipocliente.nombre;
         }
     catch(error){
       console.log(error);
       }
+    }
+
+    open() {
+      const modalRef = this.modalService.open(ClienteFormularioComponent, { windowClass: 'dark-modal' });
+      modalRef.componentInstance.name = 'World';
     }
 
 }

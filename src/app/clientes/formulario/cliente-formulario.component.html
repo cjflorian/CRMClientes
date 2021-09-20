@@ -1,5 +1,6 @@
 <h1>Formulario registro de clientes</h1>
 <form action="" [formGroup]="formNewCliente" (ngSubmit)="onSubmit()">
+    <input type="hidden" class="form-control" formControlName="id">
     <div class="form-group">
         <label for="">Nombre</label>
         <input type="text" class="form-control" formControlName="nombre">
@@ -48,6 +49,8 @@
             El campo tipo cliente es requerido
         </div>
     </div>
-   <input type="submit" value="Enviar" class="btn btn-success" [disabled]="!formNewCliente.valid"/>
+   <input type="submit" value="Enviar"  class="btn btn-success" [disabled]="!formNewCliente.valid" *ngIf="isShowCreate"/>
+   <button type="button" class="btn btn-warning"  (click)="onClickModificar()" *ngIf="isShowEdit" >Modificar</button>
+
 
 </form>
